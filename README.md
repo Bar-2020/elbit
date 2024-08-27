@@ -73,55 +73,55 @@
 
 - **Output:** `128`
 
-### 4. Number of Flights from a Specific City (Inbound & Outbound)
+### 4. Number of Flights from a Specific Country (Inbound & Outbound)
 
-**Endpoint:** `GET /flights/by-city`
+**Endpoint:** `GET /total/by-country`
 
 **Input:**
 
-- `city`: The name of the city (string).
+- `country`: The name of the country (string).
 
 **Output:**
 
-- Numeric value [0 - ∞] representing the total number of flights from the specified city.
+- Numeric value [0 - ∞] representing the total number of flights from the specified country.
 
 **Example:**
 
-- **Input:** `{city: "Berlin"}`
+- **Input:** `{country: "Japan"}`
 - **Output:** `68`
 
-### 5. Number of Outbound Flights from a Specific City
+### 5. Number of Outbound Flights from a Specific Country
 
-**Endpoint:** `GET /flights/outbound/by-city`
+**Endpoint:** `GET /flights/outbound/by-country`
 
 **Input:**
 
-- `city`: The name of the city (string).
+- `country`: The name of the country (string).
 
 **Output:**
 
-- Numeric value [0 - ∞] representing the total number of outbound flights from the specified city.
+- Numeric value [0 - ∞] representing the total number of outbound flights from the specified country.
 
 **Example:**
 
-- **Input:** `{city: "Berlin"}`
+- **Input:** `{country: "Japan"}`
 - **Output:** `16`
 
 ### 6. Number of Inbound Flights from a Specific City
 
-**Endpoint:** `GET /flights/inbound/by-city`
+**Endpoint:** `GET /flights/inbound/by-country`
 
 **Input:**
 
-- `city`: The name of the city (string).
+- `country`: The name of the country (string).
 
 **Output:**
 
-- Numeric value [0 - ∞] representing the total number of inbound flights from the specified city.
+- Numeric value [0 - ∞] representing the total number of inbound flights from the specified country.
 
 **Example:**
 
-- **Input:** `{city: "Berlin"}`
+- **Input:** `{country: "Japan"}`
 - **Output:** `52`
 
 ### 7. Number of Delayed Flights
