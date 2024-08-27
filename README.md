@@ -27,7 +27,7 @@
 
 ### 1. Number of Flights (Inbound & Outbound)
 
-**Endpoint:** `GET /flights/total`
+**Endpoint:** `GET /api/total`
 
 **Input:**
 
@@ -43,7 +43,7 @@
 
 ### 2. Number of Outbound Flights
 
-**Endpoint:** `GET /flights/outbound`
+**Endpoint:** `GET /api/outbound`
 
 **Input:**
 
@@ -59,7 +59,7 @@
 
 ### 3. Number of Inbound Flights
 
-**Endpoint:** `GET /flights/inbound`
+**Endpoint:** `GET /api/inbound`
 
 **Input:**
 
@@ -75,7 +75,7 @@
 
 ### 4. Number of Flights from a Specific Country (Inbound & Outbound)
 
-**Endpoint:** `GET /total/by-country`
+**Endpoint:** `GET /api/total/by-country`
 
 **Input:**
 
@@ -92,7 +92,7 @@
 
 ### 5. Number of Outbound Flights from a Specific Country
 
-**Endpoint:** `GET /flights/outbound/by-country`
+**Endpoint:** `GET /api/outbound/by-country`
 
 **Input:**
 
@@ -107,9 +107,9 @@
 - **Input:** `{country: "Japan"}`
 - **Output:** `16`
 
-### 6. Number of Inbound Flights from a Specific City
+### 6. Number of Inbound Flights from a Specific Country
 
-**Endpoint:** `GET /flights/inbound/by-country`
+**Endpoint:** `GET /api/inbound/by-country`
 
 **Input:**
 
@@ -126,7 +126,7 @@
 
 ### 7. Number of Delayed Flights
 
-**Endpoint:** `GET /flights/delayed`
+**Endpoint:** `GET /api/delayed`
 
 **Input:**
 
@@ -142,7 +142,7 @@
 
 ### 8. Most Popular Destination (City with the Highest Number of Outbound Flights)
 
-**Endpoint:** `GET /flights/most-popular`
+**Endpoint:** `GET /api/most-popular`
 
 **Input:**
 
@@ -158,7 +158,7 @@
 
 ### 9. Quick Getaway (Bonus Feature)
 
-**Endpoint:** `GET /flights/quick-getaway`
+**Endpoint:** `GET /api/quick-getaway`
 
 **Input:**
 
