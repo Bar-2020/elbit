@@ -155,30 +155,30 @@ export async function getQuickGetaway(req: FlightRequest, res: Response) {
     const flights = req.flights || [];
     const now = new Date();
 
-    // Group flights by country
-    const flightsByCountry = flights.reduce(
+    // Group flights by city
+    const flightsByCity = flights.reduce(
       (acc, flight) => {
-        const country = flight.CHLOCCT;
-        if (!acc[country]) {
-          acc[country] = [];
+        const city = flight.CHLOC1T;
+        if (!acc[city]) {
+          acc[city] = [];
         }
-        acc[country].push(flight);
+        acc[city].push(flight);
         return acc;
       },
       {} as Record<string, Flight[]>
     );
 
     // Try to find suitable outbound and inbound flights and return when one has been found
-    for (const country in flightsByCountry) {
-      const countryFlights = flightsByCountry[country];
+    for (const city in flightsByCity) {
+      const cityFlights = flightsByCity[city];
 
-      const outboundFlight = countryFlights.find(
+      const outboundFlight = cityFlights.find(
         (flight) =>
           flight.CHCINT && flight.CHCKZN && new Date(flight.CHSTOL) > now
       );
 
       if (outboundFlight) {
-        const inboundFlight = countryFlights.find(
+        const inboundFlight = cityFlights.find(
           (flight) =>
             !flight.CHCINT &&
             !flight.CHCKZN &&
@@ -198,8 +198,8 @@ export async function getQuickGetaway(req: FlightRequest, res: Response) {
       }
     }
 
-    // No suitable outbound and inbound flights found
-    res.json({});
+    // No suitable outbound and inbound flights found, responding with not found.
+    res.status(404).json({});
   } catch (error) {
     handleError(error, res);
   }
