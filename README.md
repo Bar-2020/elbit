@@ -39,7 +39,6 @@
 
 **Example:**
 
-- **Input:** `{}`
 - **Output:** `192`
 
 ### 2. Number of Outbound Flights
@@ -56,7 +55,6 @@
 
 **Example:**
 
-- **Input:** `{}`
 - **Output:** `64`
 
 ### 3. Number of Inbound Flights
@@ -73,7 +71,6 @@
 
 **Example:**
 
-- **Input:** `{}`
 - **Output:** `128`
 
 ### 4. Number of Flights from a Specific City (Inbound & Outbound)
@@ -141,7 +138,6 @@
 
 **Example:**
 
-- **Input:** `{}`
 - **Output:** `200`
 
 ### 8. Most Popular Destination (City with the Highest Number of Outbound Flights)
@@ -158,7 +154,6 @@
 
 **Example:**
 
-- **Input:** `{}`
 - **Output:** `"AMSTERDAM"`
 
 ### 9. Quick Getaway (Bonus Feature)
@@ -178,5 +173,4 @@
 
 **Example:**
 
-- **Input:** `{}`
 - **Output:** `{departure: "LX2526", arrival: "LX257"} / {}`
