@@ -130,6 +130,7 @@ export async function getMostPopularDestination(
       (flight) => flight.CHCINT && flight.CHCKZN
     );
 
+    // Creating a dictionary to accumulate number of outbound flights per city
     const cityCount = outboundFlights.reduce(
       (acc: Record<string, number>, flight) => {
         const city = flight.CHLOC1T;
@@ -167,7 +168,7 @@ export async function getQuickGetaway(req: FlightRequest, res: Response) {
       {} as Record<string, Flight[]>
     );
 
-    // Try to find suitable outbound and inbound flights for each country
+    // Try to find suitable outbound and inbound flights and return when one has been found
     for (const country in flightsByCountry) {
       const countryFlights = flightsByCountry[country];
 
@@ -185,9 +186,13 @@ export async function getQuickGetaway(req: FlightRequest, res: Response) {
         );
 
         if (inboundFlight) {
+          /* 
+          Both flights have been found and a response to the client can be returned. 
+          I decided to add a timestamp to avoid confusion with repeating flights
+          */
           return res.json({
-            departure: `${outboundFlight.CHOPER}${outboundFlight.CHFLTN}`,
-            arrival: `${inboundFlight.CHOPER}${inboundFlight.CHFLTN}`,
+            departure: `${outboundFlight.CHOPER}${outboundFlight.CHFLTN} @${outboundFlight.CHPTOL}`,
+            arrival: `${inboundFlight.CHOPER}${inboundFlight.CHFLTN} @${inboundFlight.CHPTOL}`,
           });
         }
       }

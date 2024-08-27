@@ -14,6 +14,7 @@ import { fetchFlightsMiddleware } from "../middleware/fetchFlightsMiddleware";
 
 const router = Router();
 
+// Enabling all the requests to use the fetch middleware
 router.use(fetchFlightsMiddleware);
 
 router.get("/total", getTotalFlights);
