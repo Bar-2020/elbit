@@ -1,20 +1,20 @@
-import { Request, Response } from "express";
-import { fetchFlightData } from "../services/flightService";
+import { Response } from "express";
 import { handleError } from "../utils/errorHandler";
+import { FlightRequest } from "../types/FlightRequest";
 import { Flight } from "../types/Flight";
 
-export async function getTotalFlights(req: Request, res: Response) {
+export async function getTotalFlights(req: FlightRequest, res: Response) {
   try {
-    const flights: Flight[] = await fetchFlightData();
+    const flights: Flight[] = req.flights || [];
     res.json({ totalFlights: flights.length });
   } catch (error) {
     handleError(error, res);
   }
 }
 
-export async function getOutboundFlights(req: Request, res: Response) {
+export async function getOutboundFlights(req: FlightRequest, res: Response) {
   try {
-    const flights: Flight[] = await fetchFlightData();
+    const flights: Flight[] = req.flights || [];
     const outboundFlights = flights.filter(
       (flight) => flight.CHCINT && flight.CHCKZN
     ).length;
@@ -24,9 +24,9 @@ export async function getOutboundFlights(req: Request, res: Response) {
   }
 }
 
-export async function getInboundFlights(req: Request, res: Response) {
+export async function getInboundFlights(req: FlightRequest, res: Response) {
   try {
-    const flights: Flight[] = await fetchFlightData();
+    const flights: Flight[] = req.flights || [];
     const inboundFlights = flights.filter(
       (flight) => !flight.CHCINT && !flight.CHCKZN
     ).length;
@@ -36,7 +36,7 @@ export async function getInboundFlights(req: Request, res: Response) {
   }
 }
 
-export async function getFlightsByCountry(req: Request, res: Response) {
+export async function getFlightsByCountry(req: FlightRequest, res: Response) {
   try {
     const { country } = req.query;
 
@@ -46,9 +46,7 @@ export async function getFlightsByCountry(req: Request, res: Response) {
         .json({ error: "Country parameter is required and must be a string" });
     }
 
-    console.log(country);
-    const flights: Flight[] = await fetchFlightData();
-
+    const flights: Flight[] = req.flights || [];
     const flightsByCountry = flights.filter(
       (flight) => flight.CHLOCCT.toUpperCase() === country.toUpperCase()
     );
@@ -58,7 +56,10 @@ export async function getFlightsByCountry(req: Request, res: Response) {
   }
 }
 
-export async function getOutboundFlightsByCountry(req: Request, res: Response) {
+export async function getOutboundFlightsByCountry(
+  req: FlightRequest,
+  res: Response
+) {
   try {
     const { country } = req.query;
 
@@ -68,7 +69,7 @@ export async function getOutboundFlightsByCountry(req: Request, res: Response) {
         .json({ error: "Country parameter is required and must be a string" });
     }
 
-    const flights: Flight[] = await fetchFlightData();
+    const flights: Flight[] = req.flights || [];
     const outboundFlightsByCountry = flights.filter(
       (flight) =>
         flight.CHCINT &&
@@ -81,7 +82,10 @@ export async function getOutboundFlightsByCountry(req: Request, res: Response) {
   }
 }
 
-export async function getInboundFlightsByCountry(req: Request, res: Response) {
+export async function getInboundFlightsByCountry(
+  req: FlightRequest,
+  res: Response
+) {
   try {
     const { country } = req.query;
 
@@ -91,7 +95,7 @@ export async function getInboundFlightsByCountry(req: Request, res: Response) {
         .json({ error: "Country parameter is required and must be a string" });
     }
 
-    const flights: Flight[] = await fetchFlightData();
+    const flights: Flight[] = req.flights || [];
     const inboundFlightsByCountry = flights.filter(
       (flight) =>
         !flight.CHCINT &&
@@ -104,9 +108,9 @@ export async function getInboundFlightsByCountry(req: Request, res: Response) {
   }
 }
 
-export async function getDelayedFlights(req: Request, res: Response) {
+export async function getDelayedFlights(req: FlightRequest, res: Response) {
   try {
-    const flights: Flight[] = await fetchFlightData();
+    const flights: Flight[] = req.flights || [];
     const delayedFlights = flights.filter(
       (flight) => flight.CHRMINE === "DELAYED"
     ).length;
@@ -116,9 +120,12 @@ export async function getDelayedFlights(req: Request, res: Response) {
   }
 }
 
-export async function getMostPopularDestination(req: Request, res: Response) {
+export async function getMostPopularDestination(
+  req: FlightRequest,
+  res: Response
+) {
   try {
-    const flights: Flight[] = await fetchFlightData();
+    const flights: Flight[] = req.flights || [];
     const outboundFlights = flights.filter(
       (flight) => flight.CHCINT && flight.CHCKZN
     );
@@ -142,25 +149,20 @@ export async function getMostPopularDestination(req: Request, res: Response) {
   }
 }
 
-export async function getQuickGetaway(req: Request, res: Response) {
+export async function getQuickGetaway(req: FlightRequest, res: Response) {
   try {
-    const flights: Flight[] = await fetchFlightData();
-
-    // Get the current date and time
+    const flights: Flight[] = req.flights || [];
     const now = new Date();
 
-    // Find the first outbound flight that is departing after the current time
     const outboundFlight = flights.find(
-      function (flight) {
-        return flight.CHCINT && flight.CHCKZN && new Date(flight.CHSTOL) > now;
-      } // Compare the parsed date with the current date
+      (flight) =>
+        flight.CHCINT && flight.CHCKZN && new Date(flight.CHSTOL) > now
     );
 
     if (!outboundFlight) {
       return res.json({}); // No suitable outbound flight found
     }
 
-    // Find the first inbound flight that arrives after the outbound flight departs
     const inboundFlight = flights.find(
       (flight) =>
         !flight.CHCINT &&
@@ -169,7 +171,6 @@ export async function getQuickGetaway(req: Request, res: Response) {
     );
 
     if (inboundFlight) {
-      console.log(outboundFlight.CHSTOL, inboundFlight.CHSTOL);
       res.json({
         departure: `${outboundFlight.CHOPER}${outboundFlight.CHFLTN}`,
         arrival: `${inboundFlight.CHOPER}${inboundFlight.CHFLTN}`,

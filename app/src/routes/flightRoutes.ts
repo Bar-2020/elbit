@@ -10,8 +10,11 @@ import {
   getMostPopularDestination,
   getQuickGetaway,
 } from "../controllers/flightController";
+import { fetchFlightsMiddleware } from "../middleware/fetchFlightsMiddleware";
 
 const router = Router();
+
+router.use(fetchFlightsMiddleware);
 
 router.get("/total", getTotalFlights);
 router.get("/outbound", getOutboundFlights);
