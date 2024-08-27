@@ -5,7 +5,7 @@ import { Flight } from "../types/Flight";
 
 export async function getTotalFlights(req: FlightRequest, res: Response) {
   try {
-    const flights: Flight[] = req.flights || [];
+    const flights = req.flights || [];
     res.json({ totalFlights: flights.length });
   } catch (error) {
     handleError(error, res);
@@ -14,7 +14,7 @@ export async function getTotalFlights(req: FlightRequest, res: Response) {
 
 export async function getOutboundFlights(req: FlightRequest, res: Response) {
   try {
-    const flights: Flight[] = req.flights || [];
+    const flights = req.flights || [];
     const outboundFlights = flights.filter(
       (flight) => flight.CHCINT && flight.CHCKZN
     ).length;
@@ -26,7 +26,7 @@ export async function getOutboundFlights(req: FlightRequest, res: Response) {
 
 export async function getInboundFlights(req: FlightRequest, res: Response) {
   try {
-    const flights: Flight[] = req.flights || [];
+    const flights = req.flights || [];
     const inboundFlights = flights.filter(
       (flight) => !flight.CHCINT && !flight.CHCKZN
     ).length;
@@ -46,7 +46,7 @@ export async function getFlightsByCountry(req: FlightRequest, res: Response) {
         .json({ error: "Country parameter is required and must be a string" });
     }
 
-    const flights: Flight[] = req.flights || [];
+    const flights = req.flights || [];
     const flightsByCountry = flights.filter(
       (flight) => flight.CHLOCCT.toUpperCase() === country.toUpperCase()
     );
@@ -69,7 +69,7 @@ export async function getOutboundFlightsByCountry(
         .json({ error: "Country parameter is required and must be a string" });
     }
 
-    const flights: Flight[] = req.flights || [];
+    const flights = req.flights || [];
     const outboundFlightsByCountry = flights.filter(
       (flight) =>
         flight.CHCINT &&
@@ -95,7 +95,7 @@ export async function getInboundFlightsByCountry(
         .json({ error: "Country parameter is required and must be a string" });
     }
 
-    const flights: Flight[] = req.flights || [];
+    const flights = req.flights || [];
     const inboundFlightsByCountry = flights.filter(
       (flight) =>
         !flight.CHCINT &&
@@ -110,7 +110,7 @@ export async function getInboundFlightsByCountry(
 
 export async function getDelayedFlights(req: FlightRequest, res: Response) {
   try {
-    const flights: Flight[] = req.flights || [];
+    const flights = req.flights || [];
     const delayedFlights = flights.filter(
       (flight) => flight.CHRMINE === "DELAYED"
     ).length;
@@ -125,7 +125,7 @@ export async function getMostPopularDestination(
   res: Response
 ) {
   try {
-    const flights: Flight[] = req.flights || [];
+    const flights = req.flights || [];
     const outboundFlights = flights.filter(
       (flight) => flight.CHCINT && flight.CHCKZN
     );
@@ -151,33 +151,50 @@ export async function getMostPopularDestination(
 
 export async function getQuickGetaway(req: FlightRequest, res: Response) {
   try {
-    const flights: Flight[] = req.flights || [];
+    const flights = req.flights || [];
     const now = new Date();
 
-    const outboundFlight = flights.find(
-      (flight) =>
-        flight.CHCINT && flight.CHCKZN && new Date(flight.CHSTOL) > now
+    // Group flights by country
+    const flightsByCountry = flights.reduce(
+      (acc, flight) => {
+        const country = flight.CHLOCCT;
+        if (!acc[country]) {
+          acc[country] = [];
+        }
+        acc[country].push(flight);
+        return acc;
+      },
+      {} as Record<string, Flight[]>
     );
 
-    if (!outboundFlight) {
-      return res.json({}); // No suitable outbound flight found
+    // Try to find suitable outbound and inbound flights for each country
+    for (const country in flightsByCountry) {
+      const countryFlights = flightsByCountry[country];
+
+      const outboundFlight = countryFlights.find(
+        (flight) =>
+          flight.CHCINT && flight.CHCKZN && new Date(flight.CHSTOL) > now
+      );
+
+      if (outboundFlight) {
+        const inboundFlight = countryFlights.find(
+          (flight) =>
+            !flight.CHCINT &&
+            !flight.CHCKZN &&
+            new Date(flight.CHPTOL) > new Date(outboundFlight.CHPTOL) // Ensure inbound flight departure is after outbound departure
+        );
+
+        if (inboundFlight) {
+          return res.json({
+            departure: `${outboundFlight.CHOPER}${outboundFlight.CHFLTN}`,
+            arrival: `${inboundFlight.CHOPER}${inboundFlight.CHFLTN}`,
+          });
+        }
+      }
     }
 
-    const inboundFlight = flights.find(
-      (flight) =>
-        !flight.CHCINT &&
-        !flight.CHCKZN &&
-        new Date(flight.CHPTOL) > new Date(outboundFlight.CHSTOL)
-    );
-
-    if (inboundFlight) {
-      res.json({
-        departure: `${outboundFlight.CHOPER}${outboundFlight.CHFLTN}`,
-        arrival: `${inboundFlight.CHOPER}${inboundFlight.CHFLTN}`,
-      });
-    } else {
-      res.json({}); // No suitable inbound flight found
-    }
+    // No suitable outbound and inbound flights found
+    res.json({});
   } catch (error) {
     handleError(error, res);
   }
