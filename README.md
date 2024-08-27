@@ -1,15 +1,24 @@
 # Elbit Flight API Assignment
 
-## How to run:
+## Running the Application
 
 ### Dockerized:
 
-1. Make sure you have docker and docker-compose installed on your pc.
-2. In the project dir run $ docker-compose up -d
-3. After the build has completed the container should now be ready on localhost:8080
+1. Make sure Docker and Docker Compose are installed on your machine.
+2. In the project directory, run the command:
+   ```
+   docker-compose up -d
+   ```
+3. Once the build is complete, the container will be available at `http://localhost:8080`.
 
-### Non-dockerized:
+### Non-Dockerized:
 
-1. Go to the app dir
-2. run $ npm i
-3. run $ npm start
+1. Navigate to the `app` directory.
+2. Install dependencies by running:
+   ```
+   npm install
+   ```
+3. Start the application with:
+   ```
+   npm start
+   ```
